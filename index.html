@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Danger! – English Game</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;font-family:"Trebuchet MS",Verdana,sans-serif;color:#1d2a44;background:linear-gradient(135deg,#ff512f,#f09819,#dd2476,#4b1fa8);background-size:400% 400%;animation:bg 14s ease infinite;overflow-x:hidden}
+@keyframes bg{0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
+.fl{display:none;position:fixed;font-size:44px;opacity:.28;animation:fly 12s linear infinite;pointer-events:none;z-index:0}
+@keyframes fly{0%{transform:translateY(105vh) rotate(0)}100%{transform:translateY(-15vh) rotate(360deg)}}
+#top{position:fixed;top:env(safe-area-inset-top,0px);left:0;padding:10px;z-index:20}
+#menu{font-weight:bold;font-size:18px;font-family:inherit;background:#fff;color:#c2185b;border:4px solid #ffd600;border-radius:30px;padding:10px 20px;cursor:pointer;box-shadow:0 4px 0 #0003;display:none}
+#app{position:relative;z-index:5;max-width:760px;margin:0 auto;padding:70px 14px 40px;text-align:center}
+h1{font-size:clamp(42px,12vw,80px);margin:10px 0;color:#fff;text-shadow:0 5px 0 #b71c1c,0 8px 14px #0006;animation:pop 2s ease-in-out infinite}
+@keyframes pop{50%{transform:scale(1.05) rotate(-1deg)}}
+.sub{color:#fff;font-size:22px;font-weight:bold;margin-bottom:24px;text-shadow:0 2px 4px #0006}
+.big{display:block;width:100%;margin:22px 0;padding:clamp(34px,8vw,60px) 20px;font-weight:bold;font-size:clamp(34px,8vw,56px);font-family:inherit;color:#fff;border:0;border-radius:28px;cursor:pointer;box-shadow:0 8px 0 #0004;transition:transform .1s}
+.big:active{transform:translateY(6px);box-shadow:0 2px 0 #0004}
+.b1{background:#00b0ff}.b2{background:#00c853}.b3{background:#7c4dff}
+.card{background:#fffffff2;border-radius:28px;padding:20px;box-shadow:0 10px 30px #0005;text-align:center}
+.sec{font-weight:bold;color:#7c4dff;font-size:15px;text-transform:uppercase}
+.bar{height:16px;background:#e0e0e0;border-radius:10px;margin:10px 0 16px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#00c853,#ffd600);transition:width .4s}
+h2{font-size:24px;margin:8px 0 14px}
+.emo{font-size:84px;line-height:1.1}
+.opt,.tile,.go{font-weight:bold;font-size:clamp(18px,4.5vw,26px);font-family:inherit;border:3px solid #7c4dff;background:#fff;color:#1d2a44;border-radius:18px;padding:14px 16px;margin:6px;cursor:pointer;box-shadow:0 4px 0 #0003}
+.opt{display:block;width:100%}
+.opt.em{display:inline-block;width:46%;font-size:54px;padding:8px}
+.opt.ok,.go{background:#00c853;color:#fff;border-color:#009624}
+.opt.bad{background:#ff5252;color:#fff;border-color:#b71c1c;animation:sh .4s}
+@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.snd{font-size:30px;background:#ffd600;border:0;border-radius:50%;width:56px;height:56px;cursor:pointer;margin:4px}
+#ans{min-height:70px;border:3px dashed #7c4dff;border-radius:18px;padding:6px;margin:8px 0;background:#f3eaff}
+.tile{display:inline-block;padding:10px 14px}
+.fb{min-height:44px;font-size:22px;font-weight:bold;margin:10px 0}
+.good{color:#00a152}.try{color:#e65100}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.vc{background:#fff;border:3px solid #00b0ff;border-radius:18px;padding:10px 4px;cursor:pointer;font-weight:bold;font-size:16px}
+.vc span{display:block;font-size:48px}
+.txt{text-align:left;background:#fff8e1;border-radius:16px;padding:14px;font-size:18px;line-height:1.5;margin:10px 0;max-height:55vh;overflow:auto}
+details{text-align:left;margin-bottom:8px}summary{cursor:pointer;font-weight:bold;color:#7c4dff;font-size:18px}
+.cf{position:fixed;top:-40px;font-size:34px;z-index:50;animation:fall 1.6s ease-in forwards;pointer-events:none}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media(min-width:900px){#app{max-width:980px}.card{padding:32px}h2{font-size:30px}.grid{grid-template-columns:repeat(5,1fr)}.txt{font-size:20px}}
+@media(max-width:480px){#app{padding:64px 10px 30px}.card{padding:14px}.grid{grid-template-columns:repeat(2,1fr)}.emo{font-size:64px}.opt.em{font-size:44px}h2{font-size:20px}}
+</style></head><body>
+<div id="top"><button id="menu" onclick="home()">🏠 Menu</button></div>
+<div id="app"></div>
+<script>
+const $=s=>document.querySelector(s),app=$("#app");
+const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=.85;speechSynthesis.speak(u)}catch(e){}}
+const PRAISE=["Muito bem! 🌟","Excelente! 🎉","Isso aí, campeão! 🏆","Perfeito! 💪","Você arrasou! 🚀","Incrível! ⭐","Mandou bem! 👏"];
+const TRY=["Quase! Tente de novo 💪","Não desista, você consegue! 🌈","Respire e tente outra vez 😊","Está perto! Mais uma vez! 🔥"];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function confetti(){["🎉","⭐","✨","🌟","🎊"].forEach(e=>{for(let i=0;i<5;i++){const s=document.createElement("span");s.className="cf";s.textContent=e;s.style.left=Math.random()*95+"vw";s.style.animationDelay=Math.random()*.5+"s";document.body.appendChild(s);setTimeout(()=>s.remove(),2400)}})}
+// floating background
+["🔥","🌊","🚒","🚑","🚓","👮","🧑‍🚒","📞"].forEach((e,i)=>{const s=document.createElement("div");s.className="fl";s.textContent=e;s.style.left=(i*13+3)+"vw";s.style.animationDelay=(-i*1.5)+"s";s.style.animationDuration=(10+i*1.3)+"s";document.body.appendChild(s)});
+
+function home(){
+  $("#menu").style.display="none";
+  app.innerHTML=`<h1>⚠️ Danger! ⚠️</h1><div class="sub">Vamos treinar inglês e tirar 10! 🏆</div>
+  <button class="big b1" onclick="vocab()">🚒 Vocabulary</button>
+  <button class="big b2" onclick="grammar()">✏️ Grammar</button>
+  <button class="big b3" onclick="reading()">📧 Reading</button>`;
+}
+
+/* ---------- ENGINE ---------- */
+function run(title,items,again,next){
+  $("#menu").style.display="block";
+  let q=items.slice(),i=0,errs=0;
+  function end(){
+    if(next)return next();
+    confetti();
+    app.innerHTML=`<div class="card"><div class="emo">🏆</div><h2>${errs?"Você terminou! Foi persistente e melhorou! 🌟":"PERFEITO! Nenhum erro! 🌟"}</h2><p style="font-size:20px">${"⭐".repeat(Math.max(1,5-Math.min(errs,4)))}</p>
+    <button class="go" onclick="${again}()">🔁 Jogar de novo</button><button class="opt" style="width:auto" onclick="home()">🏠 Menu</button></div>`;
+  }
+  function show(){
+    if(i>=q.length)return end();
+    const it=q[i];
+    app.innerHTML=`<div class="card"><div class="sec">${it.sec||title} · ${i+1}/${q.length}</div><div class="bar"><i style="width:${i/q.length*100}%"></i></div>
+    <h2>${it.p}</h2>${it.say?`<button class="snd" onclick='say(${JSON.stringify(it.say)})'>🔊</button>`:""}<div id="body"></div><div class="fb" id="fb"></div><div id="nx"></div></div>`;
+    if(it.say&&it.auto)say(it.say);
+    const done=()=>{$("#fb").innerHTML=`<span class="good">${pick(PRAISE)}</span>`;$("#nx").innerHTML=`<button class="go" id="next">Próximo ➡️</button>`;$("#next").onclick=()=>{i++;show()};if(it.say2)say(it.say2)};
+    const fail=()=>{$("#fb").innerHTML=`<span class="try">${pick(TRY)}</span>`;
+      if(!it.err){it.err=1;errs++;
+        const ex=it.v?it.v():[{...it},{...it}];
+        ex.forEach(e=>e.err=1);
+        q.splice(Math.min(i+2,q.length),0,ex[0]);q.splice(Math.min(i+5,q.length),0,ex[1]||ex[0]);
+        $("#fb").innerHTML+=`<div style="font-size:15px;color:#555">Vou te dar mais exercícios como esse para treinar 😉</div>`}};
+    if(it.t==="w"){
+      $("#body").innerHTML=`<input id="wi" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Write your answer..." style="width:100%;font-size:22px;padding:14px;border:3px solid #7c4dff;border-radius:16px;font-family:inherit"><br><button class="go" id="wc">✅ Check</button> <button class="opt" id="wh" style="width:auto;font-size:16px">💡 Dica</button>`;
+      const nz=s=>s.toLowerCase().replace(/[’']/g,"").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
+      $("#wh").onclick=()=>{$("#fb").innerHTML=`<span class="try">Começa assim: <b>${it.a[0].split(" ").slice(0,2).join(" ")} …</b></span>`};
+      const chk=()=>{const v=nz($("#wi").value);if(!v)return;if(it.a.some(x=>nz(x)===v)){$("#wi").disabled=true;$("#wc").disabled=true;it.say2=it.a[0];done()}else fail()};
+      $("#wc").onclick=chk;$("#wi").onkeydown=e=>{if(e.key==="Enter")chk()};
+    }else if(it.t==="sp"){
+      const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let fails=0;
+      $("#body").innerHTML=`<div style="font-size:15px;color:#b26a00;margin-bottom:8px">🔔 Permita que seu dispositivo escute sua voz (toque em “Permitir”).</div><button class="go" id="mic" style="font-size:28px;padding:18px 30px">🎤 Falar</button><div id="heard" style="font-size:18px;color:#555;margin-top:8px"></div><button class="opt" id="skip" style="width:auto;font-size:14px;margin-top:14px">🙋 Meu microfone não funciona</button>`;
+      const ok=()=>{$("#mic").disabled=true;it.say2=it.a;done()};
+      $("#skip").onclick=()=>{$("#body").insertAdjacentHTML("beforeend",`<div style="margin-top:10px"><button class="snd" onclick='say(${JSON.stringify(it.a)})'>🔊</button> <b>${it.a}</b><br><small>Ouça, fale em voz alta e toque:</small><br><button class="go" id="said">✅ Eu falei!</button></div>`);$("#said").onclick=ok;$("#skip").style.display="none"};
+      $("#mic").onclick=()=>{
+        if(!SR){$("#skip").click();$("#heard").textContent="Este navegador não reconhece voz. Use o modo abaixo.";return}
+        const r=new SR();r.lang="en-US";r.maxAlternatives=5;$("#mic").textContent="🎧 Estou ouvindo...";
+        r.onresult=e=>{const alts=[...e.results[0]].map(a=>a.transcript);$("#heard").innerHTML=`Eu ouvi: <b>${alts[0]}</b>`;$("#mic").textContent="🎤 Falar";
+          if(alts.some(a=>spOK(a,it.a)))ok();else{fails++;fail();say(it.a);if(fails>=2)$("#heard").innerHTML+=`<br>Dica: <b>${it.a}</b>`}};
+        r.onerror=e=>{$("#mic").textContent="🎤 Falar";if(e.error==="not-allowed"||e.error==="service-not-allowed"){$("#heard").textContent="Microfone bloqueado. Permita o microfone ou use o botão abaixo.";$("#skip").click()}else if(e.error==="no-speech"){$("#heard").textContent="Não ouvi nada. Tente de novo!"}else{$("#heard").textContent="Não consegui ouvir ("+e.error+"). Verifique o microfone e tente de novo."}};
+        r.onend=()=>{const m=$("#mic");if(m&&m.disabled)m.textContent="✅";else if(m&&m.textContent.includes("ouvindo"))m.textContent="🎤 Falar"};
+        try{r.start()}catch(x){}
+      };
+    }else if(it.t==="mc"){
+      $("#body").innerHTML=sh(it.o).map((o,k)=>`<button class="opt ${it.em?"em":""}" data-k="${k}">${o}</button>`).join("");
+      document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+        if(b.innerHTML===it.a){document.querySelectorAll(".opt").forEach(x=>x.disabled=true);b.classList.add("ok");done()}
+        else{b.classList.add("bad");b.disabled=true;fail()}});
+    }else{
+      const words=it.a.replace("?","").trim().split(" ");let pool=sh(words.map((w,k)=>({w,k}))),ans=[];
+      const draw=()=>{
+        $("#body").innerHTML=`<div id="ans">${ans.map((t,k)=>`<button class="tile" data-a="${k}">${t.w}</button>`).join("")}<b style="font-size:26px">${ans.length?"?":""}</b></div>
+        <div>${pool.map((t,k)=>`<button class="tile" data-p="${k}">${t.w}</button>`).join("")}</div>
+        <button class="go" id="chk" ${pool.length?"disabled style='opacity:.4'":""}>✅ Verificar</button>`;
+        document.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{ans.push(pool.splice(+b.dataset.p,1)[0]);draw()});
+        document.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{pool.push(ans.splice(+b.dataset.a,1)[0]);draw()});
+        $("#chk").onclick=()=>{
+          if(ans.map(t=>t.w).join(" ").toLowerCase()===words.join(" ").toLowerCase()){document.querySelectorAll(".tile,#chk").forEach(x=>x.disabled=true);it.say2=it.a;done()}
+          else{fail();pool=pool.concat(ans);ans=[];pool=sh(pool);draw()}};
+      };draw();
+    }
+  }
+  show();
+}
+
+function nzs(s){return s.toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim().replace(/^(a|an|the) /,"")}
+function lev(a,b){const d=[];for(let i=0;i<=a.length;i++)d[i]=[i];for(let j=1;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length]}
+function spOK(h,w){h=nzs(h);w=nzs(w);if(h===w||h===w+"s")return true;if(w==="911"&&["nine one one","nine 1 1","9 1 1","nine eleven"].includes(h))return true;return w.length>=6&&lev(h,w)<=1}
+/* ---------- VOCABULARY ---------- */
+const V=[["fire","🔥"],["flood","🌊"],["911","📞"],["police car","🚓"],["police officer","👮"],["fire engine","🚒"],["firefighter","🧑‍🚒"],["ambulance","🚑"],["paramedic","🧑‍⚕️"]];
+function vq(w,type){
+  const others=sh(V.filter(x=>x[0]!==w[0])).slice(0,3);
+  if(type===0)return{t:"mc",sec:"Vocabulary",em:0,p:`<div class="emo">${w[1]}</div>Qual é a palavra em inglês?`,o:[w[0],...others.map(x=>x[0])],a:w[0],say:w[0],v:()=>[vq(w,1),vq(w,0)]};
+  return{t:"mc",sec:"Vocabulary",em:1,p:`Clique no desenho de: <b>${w[0]}</b>`,o:[w[1],...others.map(x=>x[1])],a:w[1],say:w[0],auto:1,v:()=>[vq(w,0),vq(w,1)]};
+}
+function speak(){
+  $("#menu").style.display="block";
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  app.innerHTML=`<div class="card"><h2>🎤 Speaking: fale as palavras!</h2><div style="background:#fff3cd;border:3px solid #ffb300;border-radius:16px;padding:14px;font-size:19px;text-align:left">🔔 <b>Permita que o seu dispositivo escute a sua voz!</b><br>Quando o navegador perguntar, toque em <b>“Permitir”</b> (Allow) para usar o microfone.</div><p id="ms" style="font-size:18px"></p><button class="go" id="en">🎤 Ativar microfone</button><br><button class="opt" id="nm" style="width:auto;font-size:15px">🙋 Continuar sem microfone</button><br><small>Use o Chrome ou o Edge. Se não aparecer o pedido, clique no cadeado 🔒 ao lado do endereço e permita o Microfone, ou abra o jogo em uma nova aba (fora de janelas embutidas).</small></div>`;
+  const start=()=>run("Speaking",sh(V).map(w=>({t:"sp",sec:"Vocabulary · Speaking 🎤",p:`<div class="emo">${w[1]}</div>What is this? Say it in English!`,a:w[0]})),"speak");
+  $("#nm").onclick=start;
+  $("#en").onclick=async()=>{
+    if(!SR){$("#ms").innerHTML="⚠️ Este navegador não reconhece voz. Abra no Chrome ou Edge, ou continue sem microfone.";return}
+    try{const s=await navigator.mediaDevices.getUserMedia({audio:true});s.getTracks().forEach(t=>t.stop());start()}
+    catch(e){$("#ms").innerHTML="❌ O microfone está bloqueado ou não foi encontrado. Clique no 🔒 ao lado do endereço, permita o <b>Microfone</b>, recarregue a página e tente de novo.";$("#en").textContent="🎤 Tentar de novo"}
+  };
+}
+function vocab(){setTimeout(()=>{const b=$("#st2");if(b)b.onclick=speak},0);
+  $("#menu").style.display="block";
+  app.innerHTML=`<div class="card"><h2>🚒 Vocabulary: clique para ouvir e aprender!</h2><div class="grid">${V.map((w,k)=>`<div class="vc" onclick="say('${w[0]}')"><span>${w[1]}</span>${k+1}. ${w[0]}</div>`).join("")}</div><br><button class="go" id="st">🎮 Começar o jogo!</button><button class="go" id="st2" style="background:#7c4dff;border-color:#4527a0">🎤 Falar (Speaking)</button></div>`;
+  $("#st").onclick=()=>run("Vocabulary",sh(V.flatMap(w=>[vq(w,0),vq(w,1)])).concat(sh(V).filter(()=>0).map(w=>({t:"sp",sec:"Vocabulary · Speaking 🎤",p:`<div class="emo">${w[1]}</div>What is this? Say it in English!`,a:w[0]}))),"vocab");
+}
+
+/* ---------- GRAMMAR ---------- */
+const O=(sec,a,p)=>({t:"o",sec,p:p||"Monte a pergunta: toque nas palavras na ordem certa 👇",a});
+function g2(aux,ing,pre,post,pr,isNeg){
+  const other=aux==="Was"?"Were":"Was",bad=ing.replace("ing","");
+  const q1={t:"mc",sec:"Grammar · Ex. 2",p:`Complete: <br><b>___ ${pre} ___ ${post}?</b>`,o:[`${aux} / ${ing}`,`${other} / ${ing}`,`${aux} / ${bad}`,`${other} / ${bad}`],a:`${aux} / ${ing}`};
+  const w=aux.toLowerCase(),neg=w+"n’t";
+  const tag=isNeg?`<span style="background:#ff5252;color:#fff;border-radius:12px;padding:4px 12px">❌ Responda na NEGATIVA (No)</span>`:`<span style="background:#00c853;color:#fff;border-radius:12px;padding:4px 12px">✅ Responda na AFIRMATIVA (Yes)</span>`;
+  const q2={t:"mc",sec:"Grammar · Ex. 2",p:`<b>${aux} ${pre} ${ing} ${post}?</b><br><br>${tag}`,o:[`Yes, ${pr} ${w}.`,`No, ${pr} ${neg}.`,`Yes, ${pr} ${other.toLowerCase()}.`,`No, ${pr} ${other.toLowerCase()}n’t.`],a:isNeg?`No, ${pr} ${neg}.`:`Yes, ${pr} ${w}.`};
+  return[q1,q2];
+}
+function grammar(){
+  const items=[
+    O("Grammar · Ex. 1","Were you sleeping?"),
+    O("Grammar · Ex. 1","What was your friend doing?"),
+    O("Grammar · Ex. 1","Was she reading a book?"),
+    O("Grammar · Ex. 1","Where were you going?"),
+    O("Grammar · Ex. 1","What was your brother doing at three o’clock?"),
+    ...g2("Was","eating","the man in a red T-shirt","a pizza","he",0),
+    ...g2("Were","drinking","the two women","water","they",1),
+    ...g2("Was","sitting","the woman in the red dress","down","she",1),
+    ...g2("Was","running","the police officer","after a man","he",0),
+    ...g2("Was","reading","the man with glasses","a book","he",1),
+    O("Grammar · Ex. 3","What were you doing at six o’clock in the evening on Wednesday?","Complete a pergunta: What / you / do / six o’clock / evening / Wednesday"),
+    O("Grammar · Ex. 3","What were you doing at five o’clock in the afternoon on Friday?","Complete a pergunta: What / you / do / five o’clock / afternoon / Friday"),
+    O("Grammar · Ex. 3","What were you doing at nine o’clock in the evening on Saturday?","Complete a pergunta: What / you / do / nine o’clock / evening / Saturday"),
+    O("Grammar · Ex. 3","What were you doing at six o’clock in the morning on Sunday?","Complete a pergunta: What / you / do / six o’clock / morning / Sunday")
+  ];
+  $("#menu").style.display="block";
+  app.innerHTML=`<div class="card"><h2>✏️ Grammar – Past Progressive</h2><p style="font-size:19px;text-align:left"><b>was / were + verbo-ing</b><br>I <b>was</b> climbing. · We <b>were</b> singing.<br>❓ <b>Were</b> you sleeping? · ❌ I <b>wasn’t</b> sleeping.</p><button class="go" id="st">🎮 Começar!</button></div>`;
+  $("#st").onclick=()=>run("Grammar",items,"grammar");
+}
+
+/* ---------- READING ---------- */
+const TEXT=`<p><b>To:</b> grannyandgranpa@oldpeopleemail.com<br><b>Subject:</b> The Great Flood Of Calle Dos Santos</p>
+<p>Hi, Granny</p><p>I’ve got some news – we had an accident today. Don’t worry, everyone is all right. Mum is going to call you later.</p>
+<p>It happened yesterday afternoon. We were in Calle Dos Santos, on our way to the cinema. Suddenly, we noticed that there was water ahead of us on the road. It was coming into the car! It all happened so quickly. One minute we were driving along, and then … ‘Everyone out!’ said Dad. We got out, but Dad caught his leg on the door. We called the emergency services. The police were the first to arrive. The firefighters came next because there were lots of cars that were stuck. They had to pull them out. Then the paramedics came. ‘You must keep your leg still,’ said one of them to Dad. His leg was really hurting him, but it wasn’t broken. The paramedics gave us special emergency blankets to keep warm. I really liked wearing mine and asked if I could take it home.</p>
+<p>I’ve got to go now, Granny. Dad can’t walk very well at the moment, so he wants me to go to the kitchen and make him a cup of tea.</p>
+<p>Email soon with all your news!</p><p>Love,<br>Valentina</p>`;
+const R=[
+ ["What is the email mostly about?",["An accident in a flood.","A trip to the cinema.","A cup of tea.","A holiday."]],
+ ["1. When did the accident happen?",["It happened yesterday afternoon.","It happened this morning.","It happened last night.","It happened last week."]],
+ ["2. Where were Valentina and her parents going?",["They were going to the cinema.","They were going to the hospital.","They were going to Granny’s house.","They were going to school."]],
+ ["3. What happened?",["Water came into the car (a flood).","The car was on fire.","They lost the way.","The car hit a tree."]],
+ ["4. What did Valentina’s dad hurt?",["He hurt his leg.","He hurt his arm.","He hurt his head.","He hurt his hand."]],
+ ["5. Who arrived after the police officers?",["The firefighters.","The paramedics.","The teachers.","The neighbours."]],
+ ["6. What did they give Valentina’s family?",["Special emergency blankets.","Cups of tea.","Tickets to the cinema.","New clothes."]]
+];
+const W=[["accident","acidente","🚗💥"],["flood","enchente / inundação","🌊"],["emergency services","serviços de emergência","📞"],["suddenly","de repente","⚡"],["ahead of us","à nossa frente","➡️"],["got out","saiu / saímos","🚪"],["caught his leg","prendeu a perna","🦵"],["stuck","preso","🚗🌊"],["pull out","puxar para fora","💪"],["arrive","chegar","📍"],["paramedics","paramédicos","🚑"],["broken","quebrado","🦴"],["hurting","doendo","😖"],["blanket","cobertor","🧣"],["keep warm","manter aquecido","🔥"]];
+function reading(){
+  $("#menu").style.display="block";
+  app.innerHTML=`<div class="card"><h2>🧠 Antes de ler: entenda a história</h2><p style="text-align:left;font-size:18px;line-height:1.6"><b>The story in 5 steps:</b><br>1️⃣ 🚗 The family is going to the cinema by car.<br>2️⃣ 🌊 Suddenly, flood water comes into the car.<br>3️⃣ 🚪 Everyone gets out, but Dad catches his leg on the door.<br>4️⃣ 🚓🚒🚑 The police, the firefighters and the paramedics arrive.<br>5️⃣ 🧣 They get emergency blankets. Dad’s leg isn’t broken!</p><h2>Palavras importantes (toque para ouvir)</h2><div class="grid">${W.map(w=>`<div class="vc" onclick='say(${JSON.stringify(w[0])})'><span>${w[2]}</span>${w[0]}<br><small style="color:#7c4dff">${w[1]}</small></div>`).join("")}</div><br><button class="go" id="st">🎮 Treinar as palavras</button></div>`;
+  $("#st").onclick=()=>{const items=W.map(w=>({t:"mc",sec:"Preparação",p:`O que significa <b>${w[0]}</b>? 🔊`,say:w[0],o:[w[1],...sh(W.filter(x=>x!==w)).slice(0,3).map(x=>x[1])],a:w[1]}));run("Preparação",sh(items),"reading",readText)};
+}
+function readText(){
+  $("#menu").style.display="block";
+  app.innerHTML=`<div class="card"><h2>📧 Reading: an email</h2><div class="txt">${TEXT}</div><button class="go" id="st">✅ Já li! Vamos às perguntas</button></div>`;
+  $("#st").onclick=()=>{
+    const items=R.map(r=>({t:"mc",sec:"Reading",p:`<details><summary>📖 Read the text</summary><div class="txt">${TEXT}</div></details>${r[0]}`,o:r[1],a:r[1][0]}));
+    const WA=[["It happened yesterday afternoon","Yesterday afternoon","Yesterday"],["They were going to the cinema","To the cinema","The cinema","They were on their way to the cinema","On their way to the cinema"],["They had an accident","Water came into the car","The water came into the car","There was a flood","They had an accident in a flood"],["He hurt his leg","Dad hurt his leg","His leg","Leg","He caught his leg on the door"],["The firefighters","Firefighters","The firefighters arrived","The firefighters came next","The firefighters arrived after the police officers"],["They gave them special emergency blankets","Special emergency blankets","Emergency blankets","Blankets","The paramedics gave them special emergency blankets","They gave Valentina’s family special emergency blankets","They gave them emergency blankets"]];
+    const wi=R.slice(1).map((r,k)=>({t:"w",sec:"Reading · Write ✍️",p:`<details><summary>📖 Read the text</summary><div class="txt">${TEXT}</div></details>✍️ ${r[0]}<br><small>Write the answer</small>`,a:WA[k]}));
+    run("Reading",items.concat(wi),"reading");
+  };
+}
+home();
+</script></body></html>
